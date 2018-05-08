@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.dgit.domain.BoardVO;
 import com.dgit.domain.Criteria;
+import com.dgit.domain.SearchCriteria;
 import com.dgit.persistence.BoardDAO;
 
 @Service
@@ -56,6 +57,18 @@ public class BoardServiceImpl implements BoardService {
 	public int totalCount() throws Exception {
 		
 		return dao.totalCount();
+	}
+
+	@Override
+	public List<BoardVO> listSearchCriteria(SearchCriteria cri) throws Exception {
+		
+		return dao.listSearch(cri);
+	}
+
+	@Override
+	public int totalSearchCount(SearchCriteria cri) throws Exception {
+		
+		return dao.totalSearchCount(cri);
 	}
 
 }

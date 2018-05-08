@@ -132,4 +132,37 @@ public class BoardController {
 		BoardVO vo = service.read(bno);
 		model.addAttribute("boardVO", vo);
 	}
+	
+	@RequestMapping(value="/removePage", method=RequestMethod.GET)
+	public String removePage(int bno, Criteria cri) throws Exception{
+		logger.info("board removePage ...........................");
+		logger.info("bno : "+ bno);
+		logger.info(cri.toString());
+		
+		service.remove(bno);
+		return "redirect:/board/listPage?page="+cri.getPage();
+	}
+	
+	@RequestMapping(value="/modifyPage", method=RequestMethod.GET)
+	public String modifyPageGet(int bno, Model model, @ModelAttribute("cri")Criteria cri) throws Exception{
+		logger.info("board modifyPageGet ........................... ");
+		logger.info("bno : "+bno);
+		logger.info(cri.toString());
+		BoardVO oldVo = service.read(bno);
+		
+		
+		model.addAttribute("oldVo",oldVo);
+		return "/board/modifyPage";
+	}
+	
+	@RequestMapping(value="/modifyPage", method=RequestMethod.POST)
+	public String modifyPagePost(BoardVO vo, Model model,Criteria cri) throws Exception{
+		logger.info("board modifyPagePost ........................... ");
+		logger.info("bno : "+vo);
+		service.modify(vo);
+		
+		
+		//model.addAttribute("bno", vo.getBno());
+		return "redirect:/board/readPage?bno="+vo.getBno()+"&page="+cri.getPage();
+	}
 }

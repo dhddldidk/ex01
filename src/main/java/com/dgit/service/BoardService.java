@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.dgit.domain.BoardVO;
 import com.dgit.domain.Criteria;
+import com.dgit.domain.SearchCriteria;
 
 public interface BoardService {
 	public void regist(BoardVO vo) throws Exception;
@@ -20,4 +21,9 @@ public interface BoardService {
 	public List<BoardVO> listCriteria(Criteria cri) throws Exception;
 	
 	public int totalCount() throws Exception;
+	
+	//검색한 후
+	public List<BoardVO> listSearchCriteria(SearchCriteria cri) throws Exception;
+	
+	public int totalSearchCount(SearchCriteria cri) throws Exception;
 }

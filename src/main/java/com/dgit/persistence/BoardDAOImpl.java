@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.dgit.domain.BoardVO;
 import com.dgit.domain.Criteria;
+import com.dgit.domain.SearchCriteria;
 
 @Repository
 public class BoardDAOImpl implements BoardDAO {
@@ -67,6 +68,19 @@ public class BoardDAOImpl implements BoardDAO {
 	public int totalCount() throws Exception {
 		// TODO Auto-generated method stub
 		return session.selectOne(namespace+".totalCount");
+	}
+
+	//검색한 부분에 대한 결과
+	@Override
+	public List<BoardVO> listSearch(SearchCriteria cri) throws Exception {
+		// TODO Auto-generated method stub
+		return session.selectList(namespace+".listSearch",cri);
+	}
+
+	@Override
+	public int totalSearchCount(SearchCriteria cri) throws Exception {
+		// TODO Auto-generated method stub
+		return session.selectOne(namespace+".totalSearchCount",cri);
 	}
 
 }

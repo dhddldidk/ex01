@@ -29,7 +29,44 @@
 	select * from tbl_board order by bno desc limit #{pageStart}, #{perPageNum}
 	</select>
 	
+	
+	<!-- sboard에서 검색한 조건에 맞게 찾아오기 -->
+	<sql id="search">
+		<if test="searchType=='t'.toString()">
+			where title like CONCAT('%',#{keyword},'%')
+		</if>
+		<if test="searchType=='c'.toString()">
+			where content like CONCAT('%',#{keyword},'%')
+		</if>
+		<if test="searchType=='w'.toString()">
+			where writer like CONCAT('%',#{keyword},'%')
+		</if>
+		<if test="searchType=='tc'.toString()">
+			where title like CONCAT('%',#{keyword},'%') OR where content like CONCAT('%',#{keyword},'%')
+		</if>
+		<if test="searchType=='cw'.toString()">
+			where content like CONCAT('%',#{keyword},'%') OR where writer like CONCAT('%',#{keyword},'%')
+		</if>
+		<if test="searchType=='tcw'.toString()">
+			where title like CONCAT('%',#{keyword},'%') 
+			OR where content like CONCAT('%',#{keyword},'%') 
+			OR where writer like CONCAT('%',#{keyword},'%')
+		</if>
+	</sql>
+	
+	<select id="listSearch" resultType="BoardVO"><!-- search한 것에 대해 페이지 번호를 가져옴 -->
+	select * from tbl_board 
+		<include refid="search"></include>
+	order by bno desc limit #{pageStart}, #{perPageNum}
+	</select>
+	
 	<select id="totalCount" resultType="int">
 	select count(bno) from tbl_board
+	</select>
+	
+	<!-- search한 것에 대한 totalconut -->
+	<select id="totalSearchCount" resultType="int">
+	select count(bno) from tbl_board
+		<include refid="search"></include>
 	</select>
 </mapper>

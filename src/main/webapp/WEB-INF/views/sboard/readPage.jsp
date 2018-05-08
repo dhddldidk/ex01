@@ -14,6 +14,8 @@
 					<form method="get" id="f1"> 
 						<input type="hidden" name="bno" value="${boardVO.bno }">
 						<input type="hidden" name="page" value="${cri.page }">
+						<input type="hidden" name="searchType" value="${cri.searchType }">
+						<input type="hidden" name="keyword" value="${cri.keyword }">
 					</form>
 						<div class="form-group">
 							<label>Title</label>
@@ -35,9 +37,9 @@
 				</div>
 				<script type="text/javascript">
 					$("#goListBtn").click(function(){
-						//	location.href= "${pageContext.request.contextPath}/board/listAll";
-						$("#f1").attr("action","listPage");
-						$("#f1").submit();//form 태그 안에 page 번호가 들어있어서 그대로 사용하면 됨
+					//	location.href= "${pageContext.request.contextPath}/board/listAll";
+					$("#f1").attr("action","listPage");
+					$("#f1").submit();//form 태그 안에 page 번호가 들어있어서 그대로 사용하면 됨
 					})
 					$("#modifyBtn").click(function(){ // form 태그에서 보내는거나 jQuery에서 보내는거난 같음
 						$("#f1").attr("action","modifyPage");

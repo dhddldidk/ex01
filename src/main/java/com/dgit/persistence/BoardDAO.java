@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.dgit.domain.BoardVO;
 import com.dgit.domain.Criteria;
+import com.dgit.domain.SearchCriteria;
 
 public interface BoardDAO {
 	public void create(BoardVO vo) throws Exception;
@@ -24,4 +25,10 @@ public interface BoardDAO {
 	
 	//전체 글 갯수 가져오기
 	public int totalCount() throws Exception;
+	
+	//sboard검색부분
+	public List<BoardVO> listSearch(SearchCriteria cri) throws Exception;
+	
+	public int totalSearchCount(SearchCriteria cri) throws Exception;
+	
 }

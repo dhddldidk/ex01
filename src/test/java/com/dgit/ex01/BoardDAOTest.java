@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.dgit.domain.BoardVO;
 import com.dgit.domain.Criteria;
+import com.dgit.domain.SearchCriteria;
 import com.dgit.persistence.BoardDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -66,10 +67,28 @@ public class BoardDAOTest {
 		dao.listPage(2);
 	}
 	
-	@Test
+	//@Test
 	public void testListCriteria() throws Exception{
 		Criteria cri = new Criteria();
 		cri.setPage(3);
 		dao.listCriteria(cri);
+	}
+	
+	@Test
+	public void testListSearch() throws Exception{
+		SearchCriteria cri = new SearchCriteria();
+		cri.setPage(2);
+		cri.setSearchType("t");
+		cri.setKeyword("컴퓨터");
+		dao.listSearch(cri);
+	}
+	
+	//@Test
+	public void testTotalSearchCount() throws Exception{
+		SearchCriteria cri = new SearchCriteria();
+		cri.setPage(1);
+		cri.setSearchType("t");
+		cri.setKeyword("컴퓨터");
+		dao.totalSearchCount(cri);
 	}
 }
