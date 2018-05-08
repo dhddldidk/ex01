@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.dgit.domain.BoardVO;
+import com.dgit.domain.Criteria;
 import com.dgit.persistence.BoardDAO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -49,7 +50,7 @@ public class BoardDAOTest {
 		dao.update(voUpdate);
 		System.out.println(voUpdate);
 	}
-	@Test
+	//@Test
 	public void testListAll() throws Exception{
 		List<BoardVO> list = dao.listAll();
 		
@@ -57,5 +58,18 @@ public class BoardDAOTest {
 			System.out.println(vo);
 		}
 		
+	}
+	//페이징
+	//@Test
+	public void testListPage() throws Exception{
+		//페이지에 맞게 게시글을 불러오는 지 확인해보기
+		dao.listPage(2);
+	}
+	
+	@Test
+	public void testListCriteria() throws Exception{
+		Criteria cri = new Criteria();
+		cri.setPage(3);
+		dao.listCriteria(cri);
 	}
 }
