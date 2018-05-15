@@ -57,5 +57,50 @@
 			</div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-success">
+				<div class="box-header">
+					<h3 class="box-title">ADD NEW REPLY</h3>
+				</div>
+				<div class="box-body">
+					<label>Writer</label>
+					<input class="form-control" type="text" placeholder="User ID" id="newReplyWriter">
+					
+					<label>Reply text</label>
+					<input class="form-control" type="text" placeholder="Reply text" id="newReplyText">
+				</div>
+				<div class="box-footer">
+					<button class="btn btn-primary" id="replyAddBtn">ADD REPLY</button> 
+				</div>
+			</div>
+		</div>
+	</div>
 </section>
+<script>
+	$("#replyAddBtn").click(function(){
+		var bnoVal=${boardVO.bno };
+		var replyerVal = $("#newReplyWriter").val();
+		var replytextVal = $("#newReplyText").val();
+		var sendData = {bno:bnoVal, replyer:replyerVal, replytext:replytextVal};//키 : 값
+		
+		//Spring Controller에 
+		//@requestBody를 쓸 경우 jsp 파일에 JSON.stringify, headers에 Content-type을 써줘야 함
+		$.ajax({
+			type:"post",
+			url:"${pageContext.request.contextPath}/replies", //방법2 : "/ex02/replies" == 방법3 : "${pageContext.request.contextPath}/replies"
+			data:JSON.stringify(sendData), //(보내는 타입) JSON string 으로 바꿔서 보냄
+			dataType:"text",//xml, text, json형태가 들어갈 수 있음(받는 타입)
+			headers:{"Content-Type":"application/json"},
+			success:function(result){
+				console.log(result);
+				if(result=="success"){
+					alert("등록되었습니다.");
+					$("#newReplyWriter").val("");
+					$("#newReplyText").val("");
+				}
+			}
+		})
+	})
+</script>
 <%@ include file="../include/footer.jsp" %>
