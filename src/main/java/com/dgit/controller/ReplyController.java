@@ -84,7 +84,7 @@ public class ReplyController {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			entity = new ResponseEntity<>("fail", HttpStatus.OK);
+			entity = new ResponseEntity<>("fail", HttpStatus.BAD_REQUEST);
 		}
 		return entity;
 	}
@@ -93,7 +93,7 @@ public class ReplyController {
 	@RequestMapping(value="/{rno}", method=RequestMethod.DELETE)
 	public ResponseEntity<String> remove(@PathVariable("rno") int rno){
 		ResponseEntity<String> entity = null;
-		logger.info("rno : "+rno);
+		logger.info("[delete]rno : "+rno);
 		
 		try {
 			service.removeReply(rno);

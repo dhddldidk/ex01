@@ -3,6 +3,23 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ include file="../include/header.jsp" %>
+<style type="text/css">
+	.pagination{
+		width:100%;
+	}
+	.pagination li{
+		list-style: none;
+		float:left;
+		padding:3px;
+		border:1px solid orange;
+		margin:3px;
+	}
+	.pagination li a{
+		margin:3px;
+		text-decoration: none;	
+	}
+</style>
+<script src="${pageContext.request.contextPath }/resources/handlebars-v4.0.10.js"></script>
 <section class="content">
 	<div class="row">
 		<div class="col-md-12">
@@ -74,12 +91,57 @@
 					<button class="btn btn-primary" id="replyAddBtn">ADD REPLY</button> 
 				</div>
 			</div>
+			<ul class="timeline">
+				<li class="time-label" id="repliesDiv">
+					<span class="bg-green">REPLIES LIST</span>
+				</li>
+			</ul>
+			<div class="text-center">
+				<ul id="pagination" class="pagination pagination-sm no-margin">
+				</ul>
+			</div>
 		</div>
 	</div>
 </section>
+<script id="template" type="text/x-handlebars-template">
+{{#each.}}
+<li class="replyLi" data-rno={{rno}}>
+	<i class="fa fa-comments bg-blue"></i>
+	<div class="timeline-item">
+		<span class="time">
+			<i class="fa fa-clock-o"></i>{{prettifyDate regdate}}
+		</span>
+		<h3 class="timeline-header"><strong>{{rno}}</strong> -{{replyer}}</h3>
+		<div class="timeline-body">{{replytext}}
+		</div>
+		<div class="timeline-footer">
+			<a class="btn btn-primary btn-xs" data-toggle="modal" data-target="#modifyModal">Modify</a>
+			<a class="btn btn-danger">Delete</a>
+		</div>
+	</div>
+
+</li>
+{{/each}}
+</script>
+
+
 <script>
+	Handlebars.registerHelper("prettifyDate", function(value){
+		var dateObj = new Date(value);
+		var year = dateObj.getFullYear();
+		var month = dateObj.getMonth()+1;
+		var date = dateObj.getDate();
+		
+		return year+"/"+month+"/"+date;
+	})
+	
+	var source = $("#template").html();
+	var tFunc = Handlebars.compile(source);
+	var bnoVal=${boardVO.bno };
+	var pageNumber=1;
+	
 	$("#replyAddBtn").click(function(){
-		var bnoVal=${boardVO.bno };
+	//	var bnoVal=${boardVO.bno };
 		var replyerVal = $("#newReplyWriter").val();
 		var replytextVal = $("#newReplyText").val();
 		var sendData = {bno:bnoVal, replyer:replyerVal, replytext:replytextVal};//키 : 값
@@ -102,5 +164,145 @@
 			}
 		})
 	})
+	
+	//댓글 리스트를 누르면 페이징과 함께 리스트가 나오도록 처리
+	$("#repliesDiv").click(function(){
+		
+		//주소 : ex01/sboard/replies이더라도 ${pageContext.request.contextPath}/replies라고 쓰면
+		//바로 replies로 가게 됨
+		$.ajax({
+			url:"${pageContext.request.contextPath}/replies/"+bnoVal+"/"+pageNumber,
+			type:"get",
+			dataType:"json",
+			success:function(result){
+				console.log(result);
+				
+				// 덧글 list
+				displayList(result.list);
+				
+				
+				// 덧글 pagination
+				displayPaging(result);
+			}
+		
+		})
+	})
+	
+	function displayList(data){
+		$(".replyLi").remove();
+		var str = tFunc(data);
+		$(".timeline").append(str);
+	}
+	
+	function displayPaging(result){
+		var str = "";
+		if(result.pageMaker.prev){
+			str += "<li><a href='#'> << </a></li>";
+		}
+		
+		for(var i = result.pageMaker.startPage; i<=result.pageMaker.endPage; i++){
+			str += "<li><a href='#'> "+i+" </a></li>";
+		}
+		
+		if(result.pageMaker.next){
+			str += "<li><a href='#'> >> </a></li>";
+		}
+		$(".pagination").html(str);
+	}
+	
+	//덧글 페이징에 a태그를 눌렀을 때
+	$(document).on("click", ".pagination a", function(e){
+		e.preventDefault();//a태그 링크 막기
+		
+		//해당 페이지 정보 얻기
+		pageNumber = $(this).text();//해당 a태그의 값이 들어가면 됨
+		
+		//getListPage(ajax를 실행시켜야 함 ) - > 버튼이 클릭되도록 함getListPage
+		$("#repliesDiv").trigger("click"); // = $("#repliesDiv").click();
+			
+	})
+	
+	//댓글 삭제
+	
+	$(document).on("click", ".timeline-footer a:last-child", function(e){
+		var rno = $(this).parents(".replyLi").attr("data-rno");
+		$.ajax({
+			type:"delete",
+			url:"${pageContext.request.contextPath}/replies/"+rno,
+			dataType:"text",
+			success:function(result){
+				console.log(result);
+				if(result == "success"){
+					alert("삭제 되었습니다.");
+				}
+				$("#repliesDiv").trigger("click");
+			}
+		})
+		
+	})
+	
+	//댓글 수정1 Modal에 값 넣기
+	$(document).on("click", ".timeline-footer a:first-child", function(e){
+		var rno = $(this).parents(".replyLi").attr("data-rno");
+		var replytext = $(this).parents(".replyLi").find(".timeline-body").html();
+		
+		$("#rno").val(rno);
+		$("#content").val(replytext);
+	})
+	
+	//댓글 수정2 Modal에 댓글 수정하기-
+	$(document).on("click",".updateComplete", function(){
+			var rnoVal=$("#rno").val();
+			var replytextVal = $("#content").val();
+			var sendData = {replytext:replytextVal};//키 : 값
+			
+			$.ajax({
+			type:"put",
+			url:"${pageContext.request.contextPath}/replies/"+rnoVal,
+			data:JSON.stringify(sendData), //(보내는 타입) JSON string 으로 바꿔서 보냄
+			dataType:"text",//xml, text, json형태가 들어갈 수 있음(받는 타입)
+			headers:{"Content-Type":"application/json"},
+			success:function(result){
+				console.log(result);
+				if(result == "success"){
+					alert("수정되었습니다.");
+				}
+				$("#repliesDiv").trigger("click");
+			}
+		})
+	})
 </script>
+<!-- Modal 댓글 수정누르면 수정하는 Modal 뜨도록 -->
+  <div class="modal fade" id="modifyModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+        	<!-- data-dismiss="modal" 닫게 해줌 -->
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">수정하기</h4>
+        </div>
+        <div class="modal-body">
+          
+			<div class="form-group">
+				<label for="rno">번호</label>
+				<input type="text" class="form-control" id="rno" readonly="readonly">
+			</div>
+			<div class="form-group">
+				<label for="content">덧글내용</label>
+				<input type="text" class="form-control" id="content">
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary updateComplete" data-dismiss="modal">수정하기</button>
+			</div>
+		
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">닫기</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
 <%@ include file="../include/footer.jsp" %>
