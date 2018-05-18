@@ -26,4 +26,7 @@ public interface BoardService {
 	public List<BoardVO> listSearchCriteria(SearchCriteria cri) throws Exception;
 	
 	public int totalSearchCount(SearchCriteria cri) throws Exception;
+	
+	//조회수
+	public void plusViewcnt(int bno) throws Exception;
 }

@@ -19,4 +19,6 @@ public interface ReplyDAO {
 	public List<ReplyVO> listPage(int bno, Criteria cri) throws Exception;//게시물 번호, 몇개 보여줄껀지
 	
 	public int count(int bno) throws Exception;
+	
+	public int getBno(int rno) throws Exception;
 }

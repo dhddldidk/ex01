@@ -42,10 +42,15 @@ public class SearchBoardController { // page+search
 		}
 		
 		@RequestMapping(value="/readPage", method=RequestMethod.GET)
-		public void readPage(Model model, int bno, @ModelAttribute("cri")SearchCriteria cri) throws Exception {//게시글 번호를 int로 받음, page번호도
+		public void readPage(Model model, int bno, @ModelAttribute("cri")SearchCriteria cri, boolean flag) throws Exception {//게시글 번호를 int로 받음, page번호도
 			logger.info("board readPage ............................");
 			logger.info("bno : "+bno);
 			logger.info(cri.toString());
+			
+			if(flag==true){
+				service.plusViewcnt(bno);
+			}
+			
 			
 			BoardVO vo = service.read(bno);
 			model.addAttribute("boardVO", vo);
@@ -86,6 +91,7 @@ public class SearchBoardController { // page+search
 			model.addAttribute("page", cri.getPage());
 			model.addAttribute("searchType", cri.getSearchType());
 			model.addAttribute("keyword", cri.getKeyword());
+			model.addAttribute("flag", false);
 			return "redirect:/sboard/readPage";
 		}
 }

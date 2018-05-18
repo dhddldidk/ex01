@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dgit.domain.BoardVO;
 import com.dgit.domain.Criteria;
@@ -17,15 +18,17 @@ public class BoardServiceImpl implements BoardService {
 	@Autowired
 	BoardDAO dao;
 	
+	
 	@Override
 	public void regist(BoardVO vo) throws Exception {
 		dao.create(vo);
 
 	}
 
+	
+	//읽을 때 viewCnt를 올림 but 수정할 때에는 조회수가 변동없도록 처리
 	@Override
-	public BoardVO read(int bno) throws Exception {
-		
+	public BoardVO read(int bno) throws Exception {	
 		return dao.read(bno);
 	}
 
@@ -69,6 +72,13 @@ public class BoardServiceImpl implements BoardService {
 	public int totalSearchCount(SearchCriteria cri) throws Exception {
 		
 		return dao.totalSearchCount(cri);
+	}
+
+
+	@Override
+	public void plusViewcnt(int bno) throws Exception {
+		
+		dao.updateViewCnt(bno);
 	}
 
 }

@@ -69,4 +69,15 @@
 	select count(bno) from tbl_board
 		<include refid="search"></include>
 	</select>
+	
+	<!-- 게시판에 답글 갯수 나타내기-->
+	<update id="updateReplyCnt">
+		update tbl_board set replycnt = replycnt + #{amount}
+		where bno = #{bno}
+	</update>
+	
+	<!-- ViewCnt 조회수 증가시키기 -->
+	<update id="updateViewCnt">
+		update tbl_board set viewcnt = viewcnt +1 where bno = #{bno}
+	</update>
 </mapper>

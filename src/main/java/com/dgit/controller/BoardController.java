@@ -21,7 +21,7 @@ import com.dgit.service.BoardService;
 @Controller
 public class BoardController {
 
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
 	
 	@Autowired
 	private BoardService service;

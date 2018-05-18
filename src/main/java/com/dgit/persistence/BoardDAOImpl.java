@@ -1,6 +1,8 @@
 package com.dgit.persistence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +83,24 @@ public class BoardDAOImpl implements BoardDAO {
 	public int totalSearchCount(SearchCriteria cri) throws Exception {
 		// TODO Auto-generated method stub
 		return session.selectOne(namespace+".totalSearchCount",cri);
+	}
+
+	
+	//댓글을 달거나 댓글을 삭제할 때 호출되도록
+	@Override
+	public void updateReplyCnt(int bno, int amount) throws Exception {
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("bno", bno);
+		map.put("amount", amount);
+		session.update(namespace+".updateReplyCnt", map);
+		
+	}
+
+	@Override
+	public void updateViewCnt(int bno) throws Exception {
+		session.update(namespace+".updateViewCnt", bno);
+		
 	}
 
 }

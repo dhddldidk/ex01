@@ -31,4 +31,9 @@ public interface BoardDAO {
 	
 	public int totalSearchCount(SearchCriteria cri) throws Exception;
 	
+	public void updateReplyCnt(int bno, int amount) throws Exception;
+	
+	//조회수 증가
+	public void updateViewCnt(int bno) throws Exception;
+	
 }

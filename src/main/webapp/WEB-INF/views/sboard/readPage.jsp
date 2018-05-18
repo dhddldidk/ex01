@@ -93,7 +93,7 @@
 			</div>
 			<ul class="timeline">
 				<li class="time-label" id="repliesDiv">
-					<span class="bg-green">REPLIES LIST</span>
+					<span class="bg-green">REPLIES LIST [<span id="replyCnt">${boardVO.replycnt }</span>]</span>
 				</li>
 			</ul>
 			<div class="text-center">
@@ -145,6 +145,7 @@
 		var replyerVal = $("#newReplyWriter").val();
 		var replytextVal = $("#newReplyText").val();
 		var sendData = {bno:bnoVal, replyer:replyerVal, replytext:replytextVal};//키 : 값
+		var replycnt = Number($("#replyCnt").html())+1;
 		
 		//Spring Controller에 
 		//@requestBody를 쓸 경우 jsp 파일에 JSON.stringify, headers에 Content-type을 써줘야 함
@@ -160,6 +161,7 @@
 					alert("등록되었습니다.");
 					$("#newReplyWriter").val("");
 					$("#newReplyText").val("");
+					$("#replyCnt").html(replycnt);
 				}
 			}
 		})
@@ -226,6 +228,8 @@
 	
 	$(document).on("click", ".timeline-footer a:last-child", function(e){
 		var rno = $(this).parents(".replyLi").attr("data-rno");
+		var replycnt = Number($("#replyCnt").html())-1;
+		
 		$.ajax({
 			type:"delete",
 			url:"${pageContext.request.contextPath}/replies/"+rno,
@@ -234,8 +238,10 @@
 				console.log(result);
 				if(result == "success"){
 					alert("삭제 되었습니다.");
+					$("#replyCnt").html(replycnt);
 				}
 				$("#repliesDiv").trigger("click");
+				
 			}
 		})
 		
