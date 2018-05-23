@@ -1,6 +1,9 @@
 package com.dgit.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,12 +13,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dgit.domain.BoardVO;
 import com.dgit.domain.Criteria;
 import com.dgit.domain.PageMaker;
 import com.dgit.domain.SearchCriteria;
 import com.dgit.service.BoardService;
+import com.dgit.util.UploadFileUtils;
 
 @Controller
 @RequestMapping("/sboard/")
@@ -25,6 +30,10 @@ public class SearchBoardController { // page+search
 	
 	@Autowired
 	private BoardService service;
+	
+	@Resource(name="uploadPath")
+	private String uploadPath;
+	
 	
 	//페이징  url ex01/board/listPage
 		@RequestMapping(value="/listPage", method=RequestMethod.GET)
@@ -93,5 +102,45 @@ public class SearchBoardController { // page+search
 			model.addAttribute("keyword", cri.getKeyword());
 			model.addAttribute("flag", false);
 			return "redirect:/sboard/readPage";
+		}
+		
+		@RequestMapping(value="/register", method=RequestMethod.GET)
+		public void registerGet(){
+			logger.info("Board register Get ......");
+			
+			//return "/board/register";
+			
+			//board파일 안에 있는 register.jsp파일
+			//view 안의 폴더 이름이 url주소와 같을 때에는 리턴타입을 void로 하고 return을 생략할 수 있음
+		}
+		
+		
+		//jsp에서 from 을 누르면 파일들은 객체로 넘어오기 때문에 List<MultipartFile> imageFiles
+		//BoardVO에 files에 넣을 수 없음(여기에는 String임) private String[] files;
+		//그래서 BoardVO에 변수명을 바꾸던지 input에 name을 
+		//바꾸던지해서 이름을 다르게 해줘야 함
+		@RequestMapping(value="/register", method=RequestMethod.POST)
+		public String registerPost(BoardVO vo, List<MultipartFile> imageFiles) throws Exception{ //title, content
+			logger.info("board register Post............");
+			logger.info(vo.toString());
+			
+			//BoardVO에 getFiles에 넣어주기
+			ArrayList<String> list = new ArrayList<>();
+			for(MultipartFile file : imageFiles){
+				logger.info("filename : "+ file.getOriginalFilename());
+				
+				String thumb = UploadFileUtils.uploadFile(uploadPath, 
+											file.getOriginalFilename(), 
+											file.getBytes());
+				list.add(thumb);//리스트객체
+			}
+			
+			vo.setFiles(list.toArray(new String[list.size()]));//스트링배열
+			
+			service.regist(vo);
+			
+			//	return "/board/success";
+			//글을 등록하고 나면 listAll command로 가게 하기 위해 
+			return "redirect:/sboard/listPage";
 		}
 }

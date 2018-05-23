@@ -80,4 +80,11 @@
 	<update id="updateViewCnt">
 		update tbl_board set viewcnt = viewcnt +1 where bno = #{bno}
 	</update>
+	
+	<!-- 파일 업로드 -->
+	<!-- LAST_INSERT_ID()를 쓰면 제일 마지막에 auto_increment된 아이를 받을 수 있음
+	board에서 글 쓸 때 bno -->
+	<insert id="addAttach">
+		insert into tbl_attach(fullname, bno) values (#{fullName}, LAST_INSERT_ID())
+	</insert>
 </mapper>

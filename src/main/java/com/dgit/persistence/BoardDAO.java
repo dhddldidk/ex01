@@ -36,4 +36,7 @@ public interface BoardDAO {
 	//조회수 증가
 	public void updateViewCnt(int bno) throws Exception;
 	
+	//파일 업로드
+	public void addAttach(String fullName) throws Exception;
+	
 }

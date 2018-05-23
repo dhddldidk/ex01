@@ -19,10 +19,24 @@ public class BoardServiceImpl implements BoardService {
 	BoardDAO dao;
 	
 	
+	
+	//게시물 추가하는 함수
+	//게시물을 추가할 때 attch 테이블에도 사진을 넣어줌
+	@Transactional
 	@Override
 	public void regist(BoardVO vo) throws Exception {
 		dao.create(vo);
 
+		//예외처리- 파일 선택없이 게시물 등록할 때를 대비함
+		if(vo.getFiles()==null){
+			return;
+		}
+		
+		//파일도 배열로 받아서 넣어줌
+		for(String filename : vo.getFiles()){
+			dao.addAttach(filename);
+		}
+		
 	}
 
 	
