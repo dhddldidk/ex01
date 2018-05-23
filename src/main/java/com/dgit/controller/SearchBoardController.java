@@ -1,18 +1,26 @@
 package com.dgit.controller;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dgit.domain.BoardVO;
@@ -20,6 +28,7 @@ import com.dgit.domain.Criteria;
 import com.dgit.domain.PageMaker;
 import com.dgit.domain.SearchCriteria;
 import com.dgit.service.BoardService;
+import com.dgit.util.MediaUtils;
 import com.dgit.util.UploadFileUtils;
 
 @Controller
@@ -142,5 +151,46 @@ public class SearchBoardController { // page+search
 			//	return "/board/success";
 			//글을 등록하고 나면 listAll command로 가게 하기 위해 
 			return "redirect:/sboard/listPage";
+		}
+		
+		
+		
+		//명령어 /displayFile에 filename넣어줘야 함
+		@ResponseBody
+		@RequestMapping("/displayFile")
+		public ResponseEntity<byte[]> displayFile(String filename) throws Exception{
+			ResponseEntity<byte[]> entity = null;
+			InputStream in = null;//파일을 읽기위해
+			
+			logger.info("[displayFile] filename : "+ filename);
+			
+			try {
+				
+				//MediaType.IMAGE_JPEG, MediaType.png...... 확장자가 다름 util pagkage 만들어서 넣음
+				//확장자 뽑아내기
+				String format = filename.substring(filename.lastIndexOf(".")+1);
+				//.jpg등등 뽑아냄
+				
+				MediaType mType = MediaUtils.getMediaType(format);
+				
+				
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(mType);
+				
+				in = new FileInputStream(uploadPath+"/"+filename);
+				
+				//IOUtils통해서 in객체들을 뽑아줌 headers를 통해서 새로 생성하라고 함
+				entity = new ResponseEntity<byte[]>(IOUtils.toByteArray(in),
+															headers,
+															HttpStatus.CREATED);
+				//외부 저장소에 저장된 이미지 파일의 정보를 받아서 바이트 배열로 뽑아내서 바이트 배열을 실어서 보냄
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				entity = new ResponseEntity<byte[]>(HttpStatus.BAD_REQUEST);
+			}finally {
+				in.close();
+			}
+			return entity;
 		}
 }

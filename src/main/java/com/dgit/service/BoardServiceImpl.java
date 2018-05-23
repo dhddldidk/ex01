@@ -41,9 +41,15 @@ public class BoardServiceImpl implements BoardService {
 
 	
 	//읽을 때 viewCnt를 올림 but 수정할 때에는 조회수가 변동없도록 처리
+	@Transactional
 	@Override
 	public BoardVO read(int bno) throws Exception {	
-		return dao.read(bno);
+		
+		BoardVO vo = dao.read(bno);
+		List<String> files = dao.getAttach(bno);
+		vo.setFiles(files.toArray(new String[files.size()]));
+		
+		return vo;
 	}
 
 	@Override
