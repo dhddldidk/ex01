@@ -61,13 +61,28 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public void modify(BoardVO vo) throws Exception {
 		dao.update(vo);
+		
+		//첨부파일 수정할 때
+		int bno = vo.getBno();
+		dao.deleteAttach(bno);
+		
+		String[] files = vo.getFiles();
+		
+		if(files == null ){
+			return;
+		}
+		
+		for(String fileName : files){
+			dao.replaceAttach(fileName, bno);
+		}
 
 	}
 
 	@Override
 	public void remove(int bno) throws Exception {
+		
+		dao.deleteAttach(bno);
 		dao.delete(bno);
-
 	}
 
 	@Override

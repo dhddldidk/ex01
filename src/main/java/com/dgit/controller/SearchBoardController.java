@@ -75,10 +75,16 @@ public class SearchBoardController { // page+search
 		}
 		
 		@RequestMapping(value="/removePage", method=RequestMethod.GET)
-		public String removePage(int bno, SearchCriteria cri, Model model) throws Exception{
+		public String removePage(int bno, SearchCriteria cri, Model model, String[] files) throws Exception{
 			logger.info("board removePage ...........................");
 			logger.info("bno : "+ bno);
 			logger.info(cri.toString());
+			
+			
+			for(String file : files){
+				logger.info("file : "+file);
+				UploadFileUtils.deleteFile(uploadPath, file);
+			}
 			
 			service.remove(bno);
 			

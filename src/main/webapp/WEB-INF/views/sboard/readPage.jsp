@@ -33,6 +33,9 @@
 						<input type="hidden" name="page" value="${cri.page }">
 						<input type="hidden" name="searchType" value="${cri.searchType }">
 						<input type="hidden" name="keyword" value="${cri.keyword }">
+						<c:forEach var="file" items="${boardVO.files }">
+								<input type="hidden" name="files" value="${file }">
+						</c:forEach>
 					</form>
 						<div class="form-group">
 							<label>Title</label>
