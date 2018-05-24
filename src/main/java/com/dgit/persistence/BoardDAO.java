@@ -43,7 +43,7 @@ public interface BoardDAO {
 	
 	public List<String> getAttach(int bno) throws Exception;
 	
-	public void deleteAttach(int bno) throws Exception;
+	public void deleteAttach(int bno, String fullName) throws Exception;
 	
 	public void replaceAttach(String fullName, int bno) throws Exception;
 }

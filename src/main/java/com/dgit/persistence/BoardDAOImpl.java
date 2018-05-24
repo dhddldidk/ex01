@@ -115,11 +115,12 @@ public class BoardDAOImpl implements BoardDAO {
 		return session.selectList(namespace+".getAttach", bno);
 	}
 
-	@Override
-	public void deleteAttach(int bno) throws Exception {
-		session.selectOne(namespace+".deleteAttach", bno);
+	/*@Override
+	public void deleteAttach(int bno, String fullName) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		session.selectOne(namespace+".deleteAttach", map);
 		
-	}
+	}*/
 
 	@Override
 	public void replaceAttach(String fullName, int bno) throws Exception {
@@ -128,6 +129,16 @@ public class BoardDAOImpl implements BoardDAO {
 		map.put("bno", bno);
 		map.put("fullName", fullName);
 		session.insert(namespace+".replaceAttach", map);
+		
+	}
+
+	@Override
+	public void deleteAttach(int bno, String fullName) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		map.put("bno", bno);
+		map.put("fullName", fullName);
+		session.selectOne(namespace+".deleteAttach", map);
 		
 	}
 

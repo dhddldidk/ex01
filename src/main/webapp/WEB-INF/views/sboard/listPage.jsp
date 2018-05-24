@@ -50,6 +50,17 @@
 						<c:forEach var="item" items="${list }">
 							<tr>
 								<td>${item.bno }</td>
+								
+								
+								<!-- 조회수 올릴 때 생각해야할 경우의 수는 2가지 
+								1. listPage에서 타이틀을 클릭하면 readPage로 넘어감
+									그때만 조회수가 올라가야 함!! 수정이나, 수정에서 취소 클릭시에는 올라가면 안됨
+								2. 그래서 클릭을 할 때 flag=true를 매개변수로 줘서 readPage에 
+									들어갔을 때만 조회수를 올려주고 
+								3. readPage에서 수정이나 수정에서 취소를 누르고 난 후 listPage로 
+									돌아왔을 때에는 flag=false가 되서 조회수를 올리면 안됨 -->
+								
+								
 								<td><a href="readPage?bno=${item.bno }&page=${pageMaker.cri.page}&searchType=${cri.searchType}&keyword=${cri.keyword}&flag=true">${item.title } [${item.replycnt }]</a></td>
 								<td>${item.writer }</td>
 								<td><fmt:formatDate value="${item.regdate }" pattern="yyyy-MM-dd HH:mm"/></td>

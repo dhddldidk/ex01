@@ -59,18 +59,18 @@ public class SearchBoardController { // page+search
 			model.addAttribute("pageMaker",pageMaker);
 		}
 		
+		
+		//1. readPage에서 타이틀을 클릭해서 읽을 때 boolean flag를 Controller로 넘겨줌
+		//2. flag를 BoardService에 있는 read에 실어보냄
+		
 		@RequestMapping(value="/readPage", method=RequestMethod.GET)
 		public void readPage(Model model, int bno, @ModelAttribute("cri")SearchCriteria cri, boolean flag) throws Exception {//게시글 번호를 int로 받음, page번호도
 			logger.info("board readPage ............................");
 			logger.info("bno : "+bno);
 			logger.info(cri.toString());
+		
 			
-			if(flag==true){
-				service.plusViewcnt(bno);
-			}
-			
-			
-			BoardVO vo = service.read(bno);
+			BoardVO vo = service.read(bno, flag);
 			model.addAttribute("boardVO", vo);
 		}
 		
@@ -80,11 +80,13 @@ public class SearchBoardController { // page+search
 			logger.info("bno : "+ bno);
 			logger.info(cri.toString());
 			
-			
-			for(String file : files){
-				logger.info("file : "+file);
-				UploadFileUtils.deleteFile(uploadPath, file);
+			if(files != null){
+				for(String file : files){
+					logger.info("file : "+file);
+					UploadFileUtils.deleteFile(uploadPath, file);
+				}
 			}
+			
 			
 			service.remove(bno);
 			
@@ -94,22 +96,64 @@ public class SearchBoardController { // page+search
 			return "redirect:/sboard/listPage";
 		}
 		
+		//수정에 들어가면 나오는화면
 		@RequestMapping(value="/modifyPage", method=RequestMethod.GET)
 		public String modifyPageGet(int bno, Model model, @ModelAttribute("cri")SearchCriteria cri) throws Exception{
 			logger.info("board modifyPageGet ........................... ");
 			logger.info("bno : "+bno);
 			logger.info(cri.toString());
 		
-			BoardVO boardVO = service.read(bno);
+			BoardVO boardVO = service.read(bno, false);
 			model.addAttribute("boardVO", boardVO);
 			return "/sboard/modifyPage";
 		}
 		
+		//수정버튼을 누르고 나면 수정이 될 목록들을 가져와 처리해주는 함수
+		//사진 수정을 할 때 
+		//1. 사진은 추가와 삭제만 있음
+		//2. 수정페이지에서 삭제할 사진의 리스트 String[] oldFiles 와 새로 업로드 할 사진의 리스트를 받아와야함 List<MultipartFile> newFiles
+		//3. 화면에 보이는 사진들을 삭제할 때 jsp script로 삭제하고,
+		// Controller에서 외부경로에 저장되어 있는 원본사진과 썸사진을 삭제하고,
+		// Service에서 DB에 저장된 사진을 삭제하면 됨
+		//4. Controller, Service에서 새로 선택한 사진을 업로드 하면 됨
 		@RequestMapping(value="/modifyPage", method=RequestMethod.POST)
-		public String modifyPagePost(BoardVO vo, Model model, SearchCriteria cri) throws Exception{
-			logger.info("board modifyPagePost ........................... ");
-			logger.info("bno : "+vo);
-			service.modify(vo);
+		public String modifyPagePost(BoardVO vo, Model model, 
+									SearchCriteria cri, String[] oldFiles,
+									List<MultipartFile> newFiles) throws Exception{
+			logger.info("수정하려고 선택된 board modifyPagePost ........................... ");
+			logger.info("수정하려고 선택된 bno : "+vo);
+			
+			if(oldFiles!=null){
+				//수정 시 선택된 파일 지우기
+				for(String file : oldFiles){
+					logger.info("지우려고 선택된 파일 filename : "+ file);
+					
+					//업로드 폴더 c:안에 사진 지우기
+					UploadFileUtils.deleteFile(uploadPath, file);
+				
+				}
+			}
+			
+			
+			
+			//새롭게 선택한 파일 올리기
+			if(!newFiles.get(0).getOriginalFilename().equals("")){
+				ArrayList<String> list = new ArrayList<>();
+				for(MultipartFile file : newFiles){
+					logger.info("새로 선택한 파일 newFilename : "+file.getOriginalFilename());
+					//c:저장하기
+					
+					String thumb = UploadFileUtils.uploadFile(uploadPath, 
+							file.getOriginalFilename(), 
+							file.getBytes());
+							list.add(thumb);//리스트객체
+				}
+				vo.setFiles(list.toArray(new String[list.size()]));//스트링배열
+			}
+			
+			
+			
+			service.modify(vo, oldFiles);
 			
 			model.addAttribute("bno", vo.getBno());
 			model.addAttribute("page", cri.getPage());
@@ -140,6 +184,7 @@ public class SearchBoardController { // page+search
 			logger.info(vo.toString());
 			
 			//BoardVO에 getFiles에 넣어주기
+			if(!imageFiles.get(0).getOriginalFilename().equals("")){
 			ArrayList<String> list = new ArrayList<>();
 			for(MultipartFile file : imageFiles){
 				logger.info("filename : "+ file.getOriginalFilename());
@@ -151,6 +196,7 @@ public class SearchBoardController { // page+search
 			}
 			
 			vo.setFiles(list.toArray(new String[list.size()]));//스트링배열
+			}
 			
 			service.regist(vo);
 			

@@ -63,6 +63,12 @@ public class ReplyDAOImpl implements ReplyDAO {
 		
 		return session.selectOne(namespace+".getBno", rno);
 	}
+
+	@Override
+	public void deleteAllReply(int bno) throws Exception {
+		session.delete(namespace+".deleteAllReply", bno);
+		
+	}
 	
 	
 }

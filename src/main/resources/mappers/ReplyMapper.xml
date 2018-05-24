@@ -21,6 +21,11 @@
 		delete from tbl_reply where rno=#{rno}
 	</delete>
 	
+	<!-- 모든 댓글 삭제 -->
+	<delete id="deleteAllReply">
+		delete from tbl_reply where bno=#{bno}
+	</delete>
+	
 	<!-- 답글 페이징 처리 -->
 	<select id="listPage" resultType="ReplyVO">
 		select * from tbl_reply where bno=#{bno} order by rno desc 

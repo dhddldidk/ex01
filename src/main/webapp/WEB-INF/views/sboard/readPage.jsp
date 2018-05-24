@@ -70,7 +70,18 @@
 						$("#f1").attr("action","modifyPage");
 						$("#f1").submit();
 					})
+					
+					
+					//댓글이 달린 게시물은 삭제할 수 없도록 처리
 					$("#deleteBtn").click(function(){
+						
+						var replyCnt = $("#replyCnt").html();
+						
+						if(replyCnt>0){
+							alert("댓글이 달린 게시물을 삭제할 수 없습니다.");
+							return;
+						}
+						
 						var flag = confirm("정말 삭제하시겠습니까?");
 						
 						if(flag==true){
@@ -154,6 +165,13 @@
 		var replytextVal = $("#newReplyText").val();
 		var sendData = {bno:bnoVal, replyer:replyerVal, replytext:replytextVal};//키 : 값
 		var replycnt = Number($("#replyCnt").html())+1;
+		
+		
+		if(replytextVal==""){
+			alert("댓글을 작성해주세요!");
+			return;
+		}
+		
 		
 		//Spring Controller에 
 		//@requestBody를 쓸 경우 jsp 파일에 JSON.stringify, headers에 Content-type을 써줘야 함

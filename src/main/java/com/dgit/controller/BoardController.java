@@ -69,11 +69,11 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/read", method=RequestMethod.GET)
-	public void read(Model model, int bno) throws Exception {//게시글 번호를 int로 받음
+	public void read(Model model, int bno, boolean flag) throws Exception {//게시글 번호를 int로 받음
 		logger.info("board read ............................");
 		logger.info("bno : "+bno);
 		
-		BoardVO vo = service.read(bno);
+		BoardVO vo = service.read(bno, flag);
 		model.addAttribute("boardVO", vo);
 	}
 	
@@ -91,7 +91,7 @@ public class BoardController {
 		logger.info("board modify ........................... ");
 		logger.info("bno : "+bno);
 		
-		BoardVO oldVo = service.read(bno);
+		BoardVO oldVo = service.read(bno, false);
 		
 		
 		model.addAttribute("oldVo",oldVo);
@@ -102,7 +102,7 @@ public class BoardController {
 	public String modifyPost(BoardVO vo, Model model) throws Exception{
 		logger.info("board modify ........................... ");
 		logger.info("bno : "+vo);
-		service.modify(vo);
+		service.modify(vo, null);
 		
 		//model.addAttribute("bno", vo.getBno());
 		return "redirect:/board/read?bno="+vo.getBno();
@@ -124,12 +124,12 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/readPage", method=RequestMethod.GET)
-	public void readPage(Model model, int bno, @ModelAttribute("cri")Criteria cri) throws Exception {//게시글 번호를 int로 받음, page번호도
+	public void readPage(Model model, int bno, @ModelAttribute("cri")Criteria cri, boolean flag) throws Exception {//게시글 번호를 int로 받음, page번호도
 		logger.info("board readPage ............................");
 		logger.info("bno : "+bno);
 		logger.info(cri.toString());
 		
-		BoardVO vo = service.read(bno);
+		BoardVO vo = service.read(bno, flag);
 		model.addAttribute("boardVO", vo);
 	}
 	
@@ -148,7 +148,7 @@ public class BoardController {
 		logger.info("board modifyPageGet ........................... ");
 		logger.info("bno : "+bno);
 		logger.info(cri.toString());
-		BoardVO oldVo = service.read(bno);
+		BoardVO oldVo = service.read(bno, false);
 		
 		
 		model.addAttribute("oldVo",oldVo);
@@ -159,10 +159,10 @@ public class BoardController {
 	public String modifyPagePost(BoardVO vo, Model model,Criteria cri) throws Exception{
 		logger.info("board modifyPagePost ........................... ");
 		logger.info("bno : "+vo);
-		service.modify(vo);
+		service.modify(vo, null);
 		
 		
 		//model.addAttribute("bno", vo.getBno());
-		return "redirect:/board/readPage?bno="+vo.getBno()+"&page="+cri.getPage();
+		return "redirect:/board/readPage?flag=false&bno="+vo.getBno()+"&page="+cri.getPage();
 	}
 }

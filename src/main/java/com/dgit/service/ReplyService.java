@@ -14,4 +14,6 @@ public interface ReplyService {
 	//덧글 페이징
 	public List<ReplyVO> listPageReply(int bno, Criteria cri) throws Exception;
 	public int count(int bno) throws Exception;
+	
+	
 }

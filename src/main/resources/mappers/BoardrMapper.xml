@@ -90,9 +90,19 @@
 	<select id="getAttach" resultType="String">
 		select fullname from tbl_attach where bno = #{bno} order by regdate
 	</select>
+	
+	<!-- 게시물 삭제에서 
+	1.첨부파일이 없는 게시물 삭제
+	2.첨부파일 있는 게시물 삭제-where 조건 추가해서 파일명을 받아야 함 -->
 	<delete id="deleteAttach">
 		delete from tbl_attach where bno=#{bno}
+		<include refid="filename"></include>
 	</delete>
+	<sql id="filename">
+		<if test="fullName!=null">
+			and fullname=#{fullName}
+		</if>
+	</sql>
 	<insert id="replaceAttach">
 		insert into tbl_attach(fullname, bno) values (#{fullName}, #{bno})
 	</insert>
