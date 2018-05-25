@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
    
 <!DOCTYPE html>
 <html>
@@ -25,7 +26,7 @@
         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>    
   </head>
       <!-- jQuery 2.1.4 -->
     <script src="${pageContext.request.contextPath }/resources/plugins/jQuery/jQuery-2.1.4.min.js"></script>
@@ -244,7 +245,13 @@
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <img src="${pageContext.request.contextPath }/resources/dist/img/user2-160x160.jpg" class="user-image" alt="User Image"/>
-                  <span class="hidden-xs">Alexander Pierce</span>
+                  
+                  <c:if test="${login == null }">
+                  	<span class="hidden-xs">Alexander Pierce</span>
+                  </c:if>
+                  <c:if test="${login != null }">
+                  	<span class="hidden-xs">[${login.uname }]</span>
+                  </c:if>
                 </a>
                 <ul class="dropdown-menu">
                   <!-- User image -->
@@ -273,7 +280,14 @@
                       <a href="#" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
-                      <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                    
+                    <c:if test="${login == null }">
+                  	 <a href="${pageContext.request.contextPath }/user/login" class="btn btn-default btn-flat">Sign in</a>
+                  </c:if>
+                  <c:if test="${login != null }">
+                  	 <a href="${pageContext.request.contextPath }/user/logOut" class="btn btn-default btn-flat">Sign out</a>
+                  </c:if>
+                     
                     </div>
                   </li>
                 </ul>

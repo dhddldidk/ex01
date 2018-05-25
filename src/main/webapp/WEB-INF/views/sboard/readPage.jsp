@@ -56,8 +56,10 @@
 						</div>
 				</div>
 				<div class="box-footer">
-					<button type="submit" class="btn btn-warning" id="modifyBtn">MODIFY</button>
-					<button type="submit" class="btn btn-danger" id="deleteBtn">DELETE</button>
+					<c:if test="${login.uid==boardVO.writer}">
+						<button type="submit" class="btn btn-warning" id="modifyBtn">MODIFY</button>
+						<button type="submit" class="btn btn-danger" id="deleteBtn">DELETE</button>
+					</c:if>
 					<button type="submit" class="btn btn-primary" id="goListBtn">GO LIST</button>
 				</div>
 				<script type="text/javascript">
@@ -101,7 +103,7 @@
 				</div>
 				<div class="box-body">
 					<label>Writer</label>
-					<input class="form-control" type="text" placeholder="User ID" id="newReplyWriter">
+					<input class="form-control" type="text" id="newReplyWriter" value=${login.uid } readonly="readonly">
 					
 					<label>Reply text</label>
 					<input class="form-control" type="text" placeholder="Reply text" id="newReplyText">
@@ -185,7 +187,6 @@
 				console.log(result);
 				if(result=="success"){
 					alert("등록되었습니다.");
-					$("#newReplyWriter").val("");
 					$("#newReplyText").val("");
 					$("#replyCnt").html(replycnt);
 				}

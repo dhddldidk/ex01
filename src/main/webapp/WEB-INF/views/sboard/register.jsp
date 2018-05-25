@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="../include/header.jsp" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <style type="text/css">
 	#previewBox{
 		width:400px;
@@ -31,7 +32,10 @@
 						</div>
 						<div class="form-group">
 							<label>Writer</label>
-							<input type="text" name="writer" class="form-control" placeholder="Writer">
+							<!-- <input type="text" name="writer" class="form-control" placeholder="Writer"> -->
+							
+                  				<input type="text" name="writer" class="form-control" value="${login.uid }" readonly="readonly">
+                 			
 						</div>
 						<div class="form-group">
 							<label>Files</label>
