@@ -132,21 +132,34 @@
 		<span class="time">
 			<i class="fa fa-clock-o"></i>{{prettifyDate regdate}}
 		</span>
-		<h3 class="timeline-header"><strong>{{rno}}</strong> -{{replyer}}</h3>
-		<div class="timeline-body">{{replytext}}
+			<h3 class="timeline-header"><strong>{{rno}}</strong> -{{replyer}}</h3>
+			<div class="timeline-body">{{replytext}}
 		</div>
+			{{#if replyer}}
 		<div class="timeline-footer">
 			<a class="btn btn-primary btn-xs" data-toggle="modal" data-target="#modifyModal">Modify</a>
 			<a class="btn btn-danger">Delete</a>
 		</div>
+			{{/if}}
 	</div>
 
 </li>
 {{/each}}
 </script>
 
-
+<!-- 날짜가 이쁘게 나오게 하기 위해+ 댓글 단 사람만 수정, 삭제 할 수 있도록 처리 -->
 <script>
+	//보통 매개변수 하나만 받음 근데 매개변수 처리하기 위해서 하나 더 받음
+	//댓글 단 사람만 수정할 수 있도록 처리하기
+	Handlebars.registerHelper("if", function(replyer, options){
+		if(replyer == "${login.uid}"){
+			return options.fn(this);//if문에 해당하는 div를 그대로 반환할 수 있음-수정, 삭제 버튼이 들어감
+		}else{
+			return '';
+		}
+	})
+
+
 	Handlebars.registerHelper("prettifyDate", function(value){
 		var dateObj = new Date(value);
 		var year = dateObj.getFullYear();
