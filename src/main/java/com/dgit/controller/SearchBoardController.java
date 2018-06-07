@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dgit.domain.BoardVO;
-import com.dgit.domain.Criteria;
 import com.dgit.domain.PageMaker;
 import com.dgit.domain.SearchCriteria;
 import com.dgit.service.BoardService;
@@ -50,11 +49,14 @@ public class SearchBoardController { // page+search
 			logger.info("board listPage .........................");
 			logger.info(cri.toString());
 			
-			List<BoardVO> list = service.listSearchCriteria(cri);//검색 안한 리스트
+			//검색한 리스트를 적용(검색을 하던 안 하던 적용이 됨)
+			List<BoardVO> list = service.listSearchCriteria(cri);
 			model.addAttribute("list", list);
 			
 			PageMaker pageMaker = new PageMaker();
 			pageMaker.setCri(cri);
+			
+			//검색한 것에 대한 총개수를 적어줌(검색을 하던 안 하던 적용이 됨)
 			pageMaker.setTotalCount(service.totalSearchCount(cri));
 			model.addAttribute("pageMaker",pageMaker);
 		}
